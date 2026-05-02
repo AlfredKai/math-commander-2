@@ -19,8 +19,23 @@
         <label for="enemy-speed">Base Enemy Speed: <span id="speed-val">0.6</span></label>
         <input type="range" id="enemy-speed" min="0.2" max="2.0" step="0.1" value="0.6">
       </div>
+
+      <div class="setting-group">
+        <label for="win-score">Win Score: <span id="win-score-val">100</span></label>
+        <input type="range" id="win-score" min="20" max="300" step="10" value="100">
+      </div>
       
       <button id="start-btn">ENGAGE</button>
+    </div>
+
+    <!-- End Screen -->
+    <div id="end-screen" class="hidden">
+      <div id="end-card">
+        <div id="end-title">VICTORY</div>
+        <div id="end-subtitle"></div>
+        <div id="end-score"></div>
+        <button id="play-again-btn">PLAY AGAIN</button>
+      </div>
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>

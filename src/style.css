@@ -123,3 +123,95 @@ input[type=range]::-webkit-slider-runnable-track {
 #start-btn:active {
   transform: translateY(1px);
 }
+
+/* ─── End Screen ──────────────────────────────────────────────────────────── */
+#end-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 5, 16, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 20;
+  animation: fadeIn 0.6s ease forwards;
+}
+
+#end-screen.hidden {
+  display: none;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+#end-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 3rem 4rem;
+  border: 1px solid rgba(0, 242, 255, 0.25);
+  border-radius: 24px;
+  background: rgba(0, 10, 30, 0.7);
+  box-shadow: 0 0 60px rgba(0, 242, 255, 0.15), inset 0 0 40px rgba(0, 0, 0, 0.4);
+  animation: slideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+#end-title {
+  font-size: 3.5rem;
+  font-weight: bold;
+  letter-spacing: 4px;
+  text-shadow: 0 0 30px currentColor;
+}
+
+#end-title.win  { color: #00f2ff; }
+#end-title.lose { color: #ff3d00; text-shadow: 0 0 30px rgba(255, 61, 0, 0.8); }
+
+#end-subtitle {
+  font-size: 1.1rem;
+  color: #a0d8ef;
+  letter-spacing: 1px;
+}
+
+#end-score {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+#play-again-btn {
+  margin-top: 1rem;
+  padding: 0.9rem 2.8rem;
+  font-size: 1.3rem;
+  font-weight: bold;
+  font-family: inherit;
+  color: #000510;
+  background: #00f2ff;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(0, 242, 255, 0.6);
+  transition: all 0.2s ease;
+  letter-spacing: 1px;
+}
+
+#play-again-btn:hover {
+  background: #fff;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.8);
+  transform: translateY(-2px);
+}
+
+#play-again-btn:active {
+  transform: translateY(1px);
+}

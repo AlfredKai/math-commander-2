@@ -1,45 +1,40 @@
 import Phaser from 'phaser';
-
+import { ShipConfigs } from '../config/ShipConfig';
 export default class Player extends Phaser.GameObjects.Container {
-  constructor(scene, x, y) {
+  constructor(scene, x, y, shipKey = 'ship-zero') {
     super(scene, x, y);
     
     this.scene = scene;
     
+    const config = ShipConfigs[shipKey] || ShipConfigs['ship-zero'];
+
     // Ship visuals
-    this.shipSprite = scene.add.sprite(0, 0, 'hero');
+    this.shipSprite = scene.add.sprite(0, 0, config.assetKey);
     
     // Scale image to a reasonable ship size
     this.shipSprite.setDisplaySize(120, 120);
 
-    // Left Thruster
-    this.leftThruster = scene.add.particles(-25, 55, 'particle', {
-      speed: { min: 80, max: 150 },
-      angle: { min: 80, max: 100 },
-      scale: { start: 0.8, end: 0 },
-      alpha: { start: 1, end: 0 },
-      tint: 0x00f2ff,
-      lifespan: 300,
-      blendMode: 'ADD'
-    });
-
-    // Right Thruster
-    this.rightThruster = scene.add.particles(25, 55, 'particle', {
-      speed: { min: 80, max: 150 },
-      angle: { min: 80, max: 100 },
-      scale: { start: 0.8, end: 0 },
-      alpha: { start: 1, end: 0 },
-      tint: 0x00f2ff,
-      lifespan: 300,
-      blendMode: 'ADD'
+    // Thrusters
+    this.thrusters = [];
+    config.thrusters.forEach(tConf => {
+      const thruster = scene.add.particles(tConf.x, tConf.y, 'particle', {
+        speed: tConf.speed,
+        angle: tConf.angle,
+        scale: tConf.scale,
+        alpha: { start: 1, end: 0 },
+        tint: tConf.tint,
+        lifespan: 300,
+        blendMode: 'ADD'
+      });
+      this.thrusters.push(thruster);
     });
 
     // Add emitters first so they render under the ship
-    this.add([this.leftThruster, this.rightThruster, this.shipSprite]);
+    this.add([...this.thrusters, this.shipSprite]);
 
     // Animate ship sprite and thrusters (hovering effect)
     scene.tweens.add({
-      targets: [this.shipSprite, this.leftThruster, this.rightThruster],
+      targets: [this.shipSprite, ...this.thrusters],
       y: '-=10',
       duration: 1200,
       yoyo: true,

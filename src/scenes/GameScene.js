@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import Player from '../entities/Player';
 import Enemy from '../entities/Enemy';
 import { MathLogic } from '../utils/MathLogic';
-import shipImg from '../assets/ship1.png';
+import { ShipConfigs } from '../config/ShipConfig';
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
@@ -10,7 +10,9 @@ export default class GameScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('hero', shipImg);
+    Object.values(ShipConfigs).forEach(config => {
+      this.load.image(config.assetKey, config.assetPath);
+    });
   }
 
   create() {
@@ -62,8 +64,13 @@ export default class GameScene extends Phaser.Scene {
 
     startBtn.addEventListener('click', onStartClick);
 
+    // Select a random ship
+    const shipKeys = Object.keys(ShipConfigs);
+    // const randomShipKey = shipKeys[Phaser.Math.Between(0, shipKeys.length - 1)];
+    const randomShipKey = 'ship-zero';
+
     // Player
-    this.player = new Player(this, this.cameras.main.width / 2, this.cameras.main.height - 150);
+    this.player = new Player(this, this.cameras.main.width / 2, this.cameras.main.height - 150, randomShipKey);
     this.player.setVisible(false);
 
     // Effects layer

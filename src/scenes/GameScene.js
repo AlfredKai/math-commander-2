@@ -35,24 +35,32 @@ export default class GameScene extends Phaser.Scene {
       fontStyle: 'bold'
     });
 
-    this.startScreen = this.add.container(this.cameras.main.width / 2, this.cameras.main.height / 2);
-    const title = this.add.text(0, -50, 'MATH COMMANDER', {
-      fontFamily: 'Inter, monospace',
-      fontSize: '48px',
-      color: '#00f2ff',
-      fontStyle: 'bold'
-    }).setOrigin(0.5);
-    const instruction = this.add.text(0, 20, 'Click/Tap to Start', {
-      fontFamily: 'Inter, monospace',
-      fontSize: '24px',
-      color: '#ffffff'
-    }).setOrigin(0.5);
-    
-    this.startScreen.add([title, instruction]);
-    
-    this.input.once('pointerdown', () => {
-      this.startGame();
-    });
+    // HTML UI Start Screen setup
+    const startMenu = document.getElementById('start-menu');
+    const volumeSlider = document.getElementById('enemy-volume');
+    const volumeVal = document.getElementById('volume-val');
+    const speedSlider = document.getElementById('enemy-speed');
+    const speedVal = document.getElementById('speed-val');
+    const startBtn = document.getElementById('start-btn');
+
+    startMenu.classList.remove('hidden');
+
+    // Update slider values dynamically
+    volumeSlider.addEventListener('input', (e) => volumeVal.innerText = e.target.value);
+    speedSlider.addEventListener('input', (e) => speedVal.innerText = e.target.value);
+
+    const onStartClick = () => {
+      startMenu.classList.add('hidden');
+      const volume = parseInt(volumeSlider.value);
+      const speed = parseFloat(speedSlider.value);
+      
+      // Clean up listeners
+      startBtn.removeEventListener('click', onStartClick);
+      
+      this.startGame(volume, speed);
+    };
+
+    startBtn.addEventListener('click', onStartClick);
 
     // Player
     this.player = new Player(this, this.cameras.main.width / 2, this.cameras.main.height - 150);
@@ -62,9 +70,10 @@ export default class GameScene extends Phaser.Scene {
     this.effectsLayer = this.add.graphics();
   }
 
-  startGame() {
+  startGame(volume = 4, speed = 0.6) {
+    this.enemyVolume = volume;
+    this.baseEnemySpeed = speed;
     this.gameStarted = true;
-    this.startScreen.setVisible(false);
     this.player.setVisible(true);
     
     this.spawnTimer = this.time.addEvent({
@@ -76,11 +85,11 @@ export default class GameScene extends Phaser.Scene {
   }
 
   spawnEnemy() {
-    if (this.enemies.length >= 4) return;
+    if (this.enemies.length >= this.enemyVolume) return;
     
     const x = Phaser.Math.Between(100, this.cameras.main.width - 100);
     const y = -50;
-    const speed = 0.6 + (this.score / 1000);
+    const speed = this.baseEnemySpeed + (this.score / 1000);
     
     const enemy = new Enemy(this, x, y, speed);
     this.enemies.push(enemy);

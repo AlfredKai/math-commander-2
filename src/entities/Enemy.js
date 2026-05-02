@@ -1,8 +1,12 @@
 import Phaser from 'phaser';
 
+// Mirrors GameScene DEPTH constants — enemies belong to the gameplay layer
+const DEPTH_GAMEPLAY = 0;
+
 export default class Enemy extends Phaser.GameObjects.Container {
   constructor(scene, x, y, speed) {
     super(scene, x, y);
+    this.setDepth(DEPTH_GAMEPLAY);
 
     this.scene = scene;
     this.speed = speed;

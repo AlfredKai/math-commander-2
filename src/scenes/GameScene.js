@@ -4,6 +4,14 @@ import Enemy from '../entities/Enemy';
 import { MathLogic } from '../utils/MathLogic';
 import { ShipConfigs } from '../config/ShipConfig';
 
+// ─── Layer Depths ────────────────────────────────────────────────────────────
+// Higher value = rendered on top.
+const DEPTH = {
+  GAMEPLAY: 0,   // enemies, lock line, laser effects
+  PLAYER:   10,  // player ship + batteries
+  UI:       20,  // score text and HUD
+};
+
 export default class GameScene extends Phaser.Scene {
   constructor() {
     super('GameScene');
@@ -29,13 +37,13 @@ export default class GameScene extends Phaser.Scene {
     this.enemies = [];
     this.targetEnemy = null;
     
-    // UI
+    // UI — always on top
     this.scoreText = this.add.text(20, 20, 'SCORE: 0', {
       fontFamily: 'Inter, monospace',
       fontSize: '24px',
       color: '#00f2ff',
       fontStyle: 'bold'
-    });
+    }).setDepth(DEPTH.UI);
 
     // HTML UI Start Screen setup
     const startMenu = document.getElementById('start-menu');
@@ -69,12 +77,13 @@ export default class GameScene extends Phaser.Scene {
     // const randomShipKey = shipKeys[Phaser.Math.Between(0, shipKeys.length - 1)];
     const randomShipKey = 'ship-zero';
 
-    // Player
+    // Player — above gameplay, below UI
     this.player = new Player(this, this.cameras.main.width / 2, this.cameras.main.height - 150, randomShipKey);
+    this.player.setDepth(DEPTH.PLAYER);
     this.player.setVisible(false);
 
-    // Effects layer
-    this.effectsLayer = this.add.graphics();
+    // Effects layer (lock line) — gameplay depth
+    this.effectsLayer = this.add.graphics().setDepth(DEPTH.GAMEPLAY);
   }
 
   startGame(volume = 4, speed = 0.6) {
@@ -126,8 +135,8 @@ export default class GameScene extends Phaser.Scene {
     const endX = this.targetEnemy.x;
     const endY = this.targetEnemy.y;
     
-    // Laser Graphics
-    const laserGraphics = this.add.graphics();
+    // Laser Graphics — gameplay depth
+    const laserGraphics = this.add.graphics().setDepth(DEPTH.GAMEPLAY);
     
     // Outer glow
     laserGraphics.lineStyle(16, color, 0.4);
@@ -146,7 +155,7 @@ export default class GameScene extends Phaser.Scene {
       onComplete: () => laserGraphics.destroy()
     });
 
-    // Muzzle flash particles
+    // Muzzle flash particles — gameplay depth
     const muzzle = this.add.particles(startX, startY, 'particle', {
       speed: { min: 50, max: 150 },
       angle: { min: 250, max: 290 },
@@ -156,10 +165,11 @@ export default class GameScene extends Phaser.Scene {
       blendMode: 'ADD',
       emitting: false
     });
+    muzzle.setDepth(DEPTH.GAMEPLAY);
     muzzle.explode(10);
     this.time.delayedCall(400, () => muzzle.destroy());
 
-    // Impact particles
+    // Impact particles — gameplay depth
     const impact = this.add.particles(endX, endY, 'particle', {
       speed: { min: 100, max: 400 },
       angle: { min: 0, max: 360 },
@@ -169,6 +179,7 @@ export default class GameScene extends Phaser.Scene {
       blendMode: 'ADD',
       emitting: false
     });
+    impact.setDepth(DEPTH.GAMEPLAY);
     impact.explode(30);
     this.time.delayedCall(500, () => impact.destroy());
 
@@ -176,8 +187,9 @@ export default class GameScene extends Phaser.Scene {
       this.score += 10;
       this.scoreText.setText(`SCORE: ${this.score}`);
       
-      // Explosion shockwave
+      // Explosion shockwave — gameplay depth
       const shockwave = this.add.circle(endX, endY, 10, color);
+      shockwave.setDepth(DEPTH.GAMEPLAY);
       shockwave.setStrokeStyle(4, color);
       shockwave.setFillStyle(); // Transparent center
       this.tweens.add({
@@ -194,8 +206,9 @@ export default class GameScene extends Phaser.Scene {
       this.score = Math.max(0, this.score - 2);
       this.scoreText.setText(`SCORE: ${this.score}`);
       
-      // Error shockwave
+      // Error shockwave — gameplay depth
       const shockwave = this.add.circle(endX, endY, 10, color);
+      shockwave.setDepth(DEPTH.GAMEPLAY);
       this.tweens.add({
         targets: shockwave,
         scale: 4,

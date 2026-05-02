@@ -7,25 +7,22 @@
   </head>
   <body>
     <div id="game-container"></div>
+
+    <!-- Title / Start screen -->
     <div id="start-menu" class="hidden">
       <h1>MATH COMMANDER</h1>
-      
-      <div class="setting-group">
-        <label for="enemy-volume">Max Enemy Volume: <span id="volume-val">4</span></label>
-        <input type="range" id="enemy-volume" min="1" max="10" step="1" value="4">
-      </div>
-      
-      <div class="setting-group">
-        <label for="enemy-speed">Base Enemy Speed: <span id="speed-val">0.6</span></label>
-        <input type="range" id="enemy-speed" min="0.2" max="2.0" step="0.1" value="0.6">
-      </div>
-
-      <div class="setting-group">
-        <label for="win-score">Win Score: <span id="win-score-val">100</span></label>
-        <input type="range" id="win-score" min="20" max="300" step="10" value="100">
-      </div>
-      
+      <p class="menu-tagline">Defend the sector. Do the math.</p>
       <button id="start-btn">ENGAGE</button>
+    </div>
+
+    <!-- Level-complete interstitial (auto-dismissed) -->
+    <div id="level-complete" class="hidden">
+      <div id="lc-card">
+        <div id="lc-label">SECTOR CLEARED</div>
+        <div id="lc-name"></div>
+        <div id="lc-next"></div>
+        <div id="lc-bar"><div id="lc-bar-fill"></div></div>
+      </div>
     </div>
 
     <!-- End Screen -->
@@ -37,6 +34,7 @@
         <button id="play-again-btn">PLAY AGAIN</button>
       </div>
     </div>
+
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

@@ -7,42 +7,53 @@ export default class Player extends Phaser.GameObjects.Container {
     this.scene = scene;
     
     // Ship visuals
-    this.graphics = scene.add.graphics();
+    this.shipSprite = scene.add.sprite(0, 0, 'hero');
     
-    // Hull
-    this.graphics.fillStyle(0xcccccc, 1);
-    this.graphics.lineStyle(2, 0x00f2ff, 1);
-    this.graphics.beginPath();
-    this.graphics.moveTo(0, -40);
-    this.graphics.lineTo(30, 20);
-    this.graphics.lineTo(0, 10);
-    this.graphics.lineTo(-30, 20);
-    this.graphics.closePath();
-    this.graphics.fillPath();
-    this.graphics.strokePath();
-    
-    // Thrusters
-    this.thrusterCore = scene.add.triangle(0, 25, 0, 0, -10, -20, 10, -20, 0x00f2ff);
-    this.thrusterCore.setAngle(180);
-    
-    scene.tweens.add({
-      targets: this.thrusterCore,
-      scaleY: 1.5,
-      alpha: 0.7,
-      duration: 100,
-      yoyo: true,
-      repeat: -1
+    // Scale image to a reasonable ship size
+    this.shipSprite.setDisplaySize(120, 120);
+
+    // Left Thruster
+    this.leftThruster = scene.add.particles(-25, 55, 'particle', {
+      speed: { min: 80, max: 150 },
+      angle: { min: 80, max: 100 },
+      scale: { start: 0.8, end: 0 },
+      alpha: { start: 1, end: 0 },
+      tint: 0x00f2ff,
+      lifespan: 300,
+      blendMode: 'ADD'
     });
 
-    this.add([this.thrusterCore, this.graphics]);
+    // Right Thruster
+    this.rightThruster = scene.add.particles(25, 55, 'particle', {
+      speed: { min: 80, max: 150 },
+      angle: { min: 80, max: 100 },
+      scale: { start: 0.8, end: 0 },
+      alpha: { start: 1, end: 0 },
+      tint: 0x00f2ff,
+      lifespan: 300,
+      blendMode: 'ADD'
+    });
+
+    // Add emitters first so they render under the ship
+    this.add([this.leftThruster, this.rightThruster, this.shipSprite]);
+
+    // Animate ship sprite and thrusters (hovering effect)
+    scene.tweens.add({
+      targets: [this.shipSprite, this.leftThruster, this.rightThruster],
+      y: '-=10',
+      duration: 1200,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
+    });
 
     // Batteries
     this.batteries = [];
-    const batteryOffsets = [-80, 0, 80];
+    const batteryOffsets = [-100, 0, 100];
     
     for (let i = 0; i < 3; i++) {
       const bx = batteryOffsets[i];
-      const by = 50;
+      const by = 100; // Increased from 80 for a larger gap
       
       const bContainer = scene.add.container(bx, by);
       

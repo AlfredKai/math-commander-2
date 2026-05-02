@@ -2,10 +2,15 @@ import Phaser from 'phaser';
 import Player from '../entities/Player';
 import Enemy from '../entities/Enemy';
 import { MathLogic } from '../utils/MathLogic';
+import shipImg from '../assets/ship1.png';
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
     super('GameScene');
+  }
+
+  preload() {
+    this.load.image('hero', shipImg);
   }
 
   create() {
@@ -50,7 +55,7 @@ export default class GameScene extends Phaser.Scene {
     });
 
     // Player
-    this.player = new Player(this, this.cameras.main.width / 2, this.cameras.main.height - 100);
+    this.player = new Player(this, this.cameras.main.width / 2, this.cameras.main.height - 150);
     this.player.setVisible(false);
 
     // Effects layer

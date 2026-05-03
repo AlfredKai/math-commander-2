@@ -72,15 +72,7 @@ export default class GameScene extends Phaser.Scene {
       }
     ).setOrigin(1, 0).setDepth(DEPTH.UI);
 
-    this.winText = this.add.text(
-      this.cameras.main.width - 20, 46, '',
-      {
-        fontFamily: 'Inter, monospace',
-        fontSize: '16px',
-        color: '#607d8b',
-        fontStyle: 'bold'
-      }
-    ).setOrigin(1, 0).setDepth(DEPTH.UI);
+
 
     // ── HTML references ────────────────────────────────────────────────────
     const startMenu    = document.getElementById('start-menu');
@@ -138,7 +130,7 @@ export default class GameScene extends Phaser.Scene {
     this.scoreText.setText('SCORE: 0');
     this._refreshHullText();
     this.levelLabel.setText(lvl.name);
-    this.winText.setText(`WIN AT: ${lvl.winScore}`);
+
 
     this.player.setVisible(true);
     this.gameStarted = true;

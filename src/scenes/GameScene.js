@@ -104,6 +104,38 @@ export default class GameScene extends Phaser.Scene {
     );
     this.player.setDepth(DEPTH.PLAYER);
     this.player.setVisible(false);
+    this.playerSpeed = 420;
+    this.moveKeys = this.input.keyboard.addKeys({
+      up: Phaser.Input.Keyboard.KeyCodes.UP,
+      down: Phaser.Input.Keyboard.KeyCodes.DOWN,
+      left: Phaser.Input.Keyboard.KeyCodes.LEFT,
+      right: Phaser.Input.Keyboard.KeyCodes.RIGHT,
+      w: Phaser.Input.Keyboard.KeyCodes.W,
+      a: Phaser.Input.Keyboard.KeyCodes.A,
+      s: Phaser.Input.Keyboard.KeyCodes.S,
+      d: Phaser.Input.Keyboard.KeyCodes.D
+    });
+
+    // Drag to move ship (iPad / Touch support)
+    this.input.on('pointermove', (pointer) => {
+      if (!this.gameStarted || this.gameOver || this.transitioning) return;
+
+      if (pointer.isDown) {
+        const dx = pointer.x - pointer.prevPosition.x;
+        if (dx !== 0) {
+          const horizontalPadding = Math.min(
+            this.player.getHorizontalPadding(),
+            this.cameras.main.width / 2
+          );
+
+          this.player.x = Phaser.Math.Clamp(
+            this.player.x + dx,
+            horizontalPadding,
+            this.cameras.main.width - horizontalPadding
+          );
+        }
+      }
+    });
 
     // Effects layer (lock line)
     this.effectsLayer = this.add.graphics().setDepth(DEPTH.GAMEPLAY);
@@ -358,6 +390,22 @@ export default class GameScene extends Phaser.Scene {
   // ─── Update loop ──────────────────────────────────────────────────────────
   update(time, delta) {
     if (!this.gameStarted || this.gameOver || this.transitioning) return;
+
+    const moveX = (this.moveKeys.left.isDown || this.moveKeys.a.isDown ? -1 : 0)
+      + (this.moveKeys.right.isDown || this.moveKeys.d.isDown ? 1 : 0);
+    if (moveX !== 0) {
+      const horizontalMovement = Math.sign(moveX) * this.playerSpeed * (delta / 1000);
+      const horizontalPadding = Math.min(
+        this.player.getHorizontalPadding(),
+        this.cameras.main.width / 2
+      );
+
+      this.player.x = Phaser.Math.Clamp(
+        this.player.x + horizontalMovement,
+        horizontalPadding,
+        this.cameras.main.width - horizontalPadding
+      );
+    }
 
     // Draw targeting line
     this.effectsLayer.clear();
